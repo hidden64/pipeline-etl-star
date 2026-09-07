@@ -1,0 +1,20 @@
+# Pilote PostgreSQL moderne (psycopg 3). Le suffixe [binary] embarque libpq :
+# aucune dépendance système à installer sous Windows.
+psycopg[binary]>=3.2
+
+# Appels HTTP vers les API (GTFS, Open-Meteo).
+requests>=2.32
+
+# Parsing et normalisation des fichiers plats. Volontairement cantonné à
+# l'extraction : toutes les transformations lourdes se font en SQL, dans la base.
+pandas>=2.2
+
+# Génération des rapports HTML automatisés.
+Jinja2>=3.1
+
+# Lecture de la configuration depuis .env, pour ne jamais commiter de mot de passe.
+python-dotenv>=1.0
+
+# Tests
+pytest>=8.0
+gtfs-realtime-bindings>=1.0  # décodage protobuf du flux GTFS-RT temps réel

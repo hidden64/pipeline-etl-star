@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rapport d'exécution #{{ execution.id_execution }} — Ponctualité STAR</title>
+<style>
+  :root {
+    --encre: #1a2230; --gris: #5b6472; --faible: #8a93a3;
+    --trait: #e3e7ee; --fond: #f5f7fa; --carte: #ffffff;
+    --accent: #1f6feb; --ok: #1a7f4b; --alerte: #c2410c; --erreur: #b91c1c;
+    --pluie: #2b6cb0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fond); color: var(--encre);
+         font: 15px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .page { max-width: 1000px; margin: 0 auto; padding: 32px 24px 64px; }
+  header.chapeau { border-bottom: 3px solid var(--encre); padding-bottom: 16px; margin-bottom: 8px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 40px 0 14px; padding-bottom: 6px;
+       border-bottom: 1px solid var(--trait); letter-spacing: .01em; }
+  .sous { color: var(--gris); font-size: 14px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px;
+           font-size: 12px; font-weight: 600; }
+  .badge.SUCCES { background: #dcfce7; color: var(--ok); }
+  .badge.ECHEC  { background: #fee2e2; color: var(--erreur); }
+  .badge.EN_COURS { background: #fef9c3; color: #854d0e; }
+
+  .cartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px; margin-top: 16px; }
+  .carte { background: var(--carte); border: 1px solid var(--trait); border-radius: 10px;
+           padding: 14px 16px; }
+  .carte .val { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  .carte .lib { font-size: 12px; color: var(--faible); text-transform: uppercase;
+                letter-spacing: .04em; margin-top: 2px; }
+  .carte .note { font-size: 12px; color: var(--gris); margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--carte);
+          border: 1px solid var(--trait); border-radius: 10px; overflow: hidden; font-size: 14px; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--trait); }
+  th { background: #eef2f7; font-size: 12px; text-transform: uppercase;
+       letter-spacing: .03em; color: var(--gris); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .barre { position: relative; background: #eef2f7; border-radius: 5px; height: 20px; min-width: 60px; }
+  .barre > span { position: absolute; inset: 0 auto 0 0; border-radius: 5px; }
+  .barre.retard > span { background: var(--pluie); }
+  .barre em { position: absolute; right: 6px; top: 0; line-height: 20px;
+              font-style: normal; font-size: 12px; color: var(--encre); font-variant-numeric: tabular-nums; }
+
+  .sev-ERREUR { color: var(--erreur); font-weight: 600; }
+  .sev-AVERTISSEMENT { color: var(--alerte); font-weight: 600; }
+  .pointe { color: var(--alerte); font-weight: 600; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--trait);
+           color: var(--faible); font-size: 12px; }
+  .rem { background: #fff8e6; border: 1px solid #fde68a; border-radius: 8px;
+         padding: 10px 14px; font-size: 13px; color: #7c5b12; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="chapeau">
+    <h1>Rapport d'exécution #{{ execution.id_execution }}</h1>
+    <div class="sous">
+      Entrepôt décisionnel — ponctualité du réseau STAR croisée avec la météo ·
+      généré le {{ genere_le.strftime('%d/%m/%Y à %H:%M') }}
+    </div>
+    <div style="margin-top:8px">
+      Statut : <span class="badge {{ execution.statut }}">{{ execution.statut }}</span>
+      · durée totale {{ execution.duree_sec | duree }}
+      {% if execution.parametres and execution.parametres.periode_debut %}
+      · période {{ execution.parametres.periode_debut }} → {{ execution.parametres.periode_fin }}
+      {% endif %}
+    </div>
+  </header>
+
+  {# ===================== INDICATEURS CLÉS ===================== #}
+  <h2>Indicateurs clés</h2>
+  <div class="cartes">
+    <div class="carte">
+      <div class="val">{{ kpi.total_passages | nombre }}</div>
+      <div class="lib">Passages</div>
+    </div>
+    <div class="carte">
+      <div class="val">{{ kpi.taux_ponctualite_pct }} %</div>
+      <div class="lib">Ponctualité</div>
+      <div class="note">−1 min / +3 min autour de l'horaire</div>
+    </div>
+    <div class="carte">
+      <div class="val">{{ kpi.retard_moyen_sec }} s</div>
+      <div class="lib">Retard moyen</div>
+      <div class="note">médiane {{ kpi.retard_median_sec }} s · P90 {{ kpi.retard_p90_sec }} s</div>
+    </div>
+    <div class="carte">
+      <div class="val">{{ kpi.passages_supprimes | nombre }}</div>
+      <div class="lib">Courses supprimées</div>
+    </div>
+    <div class="carte">
+      <div class="val">{{ kpi.passages_degrades | nombre }}</div>
+      <div class="lib">Faits dégradés</div>
+      <div class="note">rattachés à un membre inconnu</div>
+    </div>
+  </div>
+
+  {# ===================== DÉROULÉ DU PIPELINE ===================== #}
+  <h2>Déroulé du pipeline</h2>
+  <table>
+    <thead><tr>
+      <th>Étape</th><th>Phase</th><th class="num">Lues</th>
+      <th class="num">Insérées</th><th class="num">Rejetées</th>
+      <th class="num">Durée</th><th>Statut</th>
+    </tr></thead>
+    <tbody>
+    {% for e in etapes %}
+      <tr>
+        <td>{{ e.nom_etape }}</td>
+        <td>{{ e.phase }}</td>
+        <td class="num">{{ e.lignes_lues | nombre }}</td>
+        <td class="num">{{ e.lignes_inserees | nombre }}</td>
+        <td class="num">{{ e.lignes_rejetees | nombre }}</td>
+        <td class="num">{{ e.duree_sec | duree }}</td>
+        <td><span class="badge {{ e.statut }}">{{ e.statut }}</span></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {# ===================== QUALITÉ DES DONNÉES ===================== #}
+  <h2>Qualité des données — rejets par règle</h2>
+  {% if qualite %}
+  <table>
+    <thead><tr>
+      <th>Règle</th><th>Description</th><th>Sévérité</th><th class="num">Nombre</th>
+    </tr></thead>
+    <tbody>
+    {% for q in qualite %}
+      <tr>
+        <td><code>{{ q.code_regle }}</code></td>
+        <td>{{ q.libelle }}</td>
+        <td class="sev-{{ q.severite }}">{{ q.severite }}</td>
+        <td class="num">{{ q.nombre | nombre }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="rem">
+    <strong>ERREUR</strong> : ligne écartée du fait (donnée irrécupérable). ·
+    <strong>AVERTISSEMENT</strong> : ligne conservée (doublon dédupliqué, ou
+    rattachée à un membre inconnu). Le taux de rejet ne compte que les erreurs.
+  </div>
+  {% else %}
+  <p class="sous">Aucun rejet enregistré pour cette exécution.</p>
+  {% endif %}
+
+  {# ===================== EFFET MÉTÉO ===================== #}
+  <h2>Effet de la pluie sur la ponctualité</h2>
+  <table>
+    <thead><tr>
+      <th>Précipitation</th><th class="num">Passages</th>
+      <th class="num">Ponctualité</th><th>Retard moyen</th>
+    </tr></thead>
+    <tbody>
+    {% set retard_max = (meteo | map(attribute='retard_moyen_sec') | map('float') | list | max) or 1 %}
+    {% for m in meteo %}
+      <tr>
+        <td>{{ m.tranche_precipitation | capitalize }}</td>
+        <td class="num">{{ m.passages | nombre }}</td>
+        <td class="num">{{ m.taux_ponctualite_pct }} %</td>
+        <td>
+          <div class="barre retard">
+            <span style="width: {{ (m.retard_moyen_sec | float / retard_max * 100) | round(0) }}%"></span>
+            <em>{{ m.retard_moyen_sec }} s</em>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="rem">
+    Lecture : plus la précipitation augmente, plus le retard moyen croît — la
+    corrélation recherchée par le projet, mesurée sur les passages dont la météo
+    est connue (le membre inconnu météo est exclu de cet axe).
+  </div>
+
+  {# ===================== CRÉNEAUX HORAIRES ===================== #}
+  <h2>Retard moyen par heure</h2>
+  <table>
+    <thead><tr>
+      <th class="num">Heure</th><th>Créneau</th>
+      <th class="num">Passages</th><th>Retard moyen</th>
+    </tr></thead>
+    <tbody>
+    {% set rc_max = (creneaux | map(attribute='retard_moyen_sec') | map('float') | list | max) or 1 %}
+    {% for c in creneaux %}
+      <tr>
+        <td class="num">{{ '%02d' % c.heure }} h</td>
+        <td>{{ c.libelle_creneau | libelle }}{% if c.est_heure_pointe %} <span class="pointe">● pointe</span>{% endif %}</td>
+        <td class="num">{{ c.passages | nombre }}</td>
+        <td>
+          <div class="barre retard">
+            <span style="width: {{ (c.retard_moyen_sec | float / rc_max * 100) | round(0) }}%"></span>
+            <em>{{ c.retard_moyen_sec }} s</em>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {# ===================== LIGNES ===================== #}
+  <h2>Ponctualité par ligne</h2>
+  <table>
+    <thead><tr>
+      <th>Ligne</th><th>Desserte</th><th>Mode</th>
+      <th class="num">Passages</th><th class="num">Supprimées</th>
+      <th class="num">Retard moy.</th><th class="num">Ponctualité</th>
+    </tr></thead>
+    <tbody>
+    {% for l in lignes_top %}
+      <tr>
+        <td><strong>{{ l.code_ligne }}</strong></td>
+        <td class="sous">{{ l.nom_ligne }}</td>
+        <td>{{ l.mode_transport | capitalize }}</td>
+        <td class="num">{{ l.passages | nombre }}</td>
+        <td class="num">{{ l.courses_supprimees | nombre }}</td>
+        <td class="num">{{ l.retard_moyen_sec }} s</td>
+        <td class="num">{{ l.taux_ponctualite_pct }} %</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <footer>
+    Rapport généré automatiquement par le pipeline <code>mobilite</code> ·
+    exécution #{{ execution.id_execution }} ·
+    données ouvertes STAR (Keolis Rennes) &amp; Open-Meteo.
+    Les ratios sont recalculés à la lecture, jamais stockés (additivité).
+  </footer>
+
+</div>
+</body>
+</html>

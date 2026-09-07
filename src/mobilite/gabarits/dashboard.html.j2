@@ -1,0 +1,431 @@
+<title>Ponctualité STAR · Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+  /* Design CLAIR UNIQUEMENT (choix du commanditaire), palette Elastic UI (Kibana). */
+  :root {
+    --page:#f7f8fc; --panel:#ffffff; --chrome:#1d1e24; --chrome-2:#25262e;
+    --bord:#d3dae6; --bord-ft:#98a2b3; --texte:#1a1c21; --sub:#69707d; --faint:#98a2b3;
+    --grille:#eef0f4; --primary:#0077cc;
+    --vis0:#54b399; --vis1:#6092c0; --vis2:#d36086; --vis3:#9170b8;
+    --vis5:#d6bf57; --vis7:#da8b45; --vis9:#e7664c;
+    --success:#00a69b; --warning:#f5a700; --danger:#bd271e;
+    --tip-bg:#1d1e24;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--page); color:var(--texte);
+         font-family:"Inter","Segoe UI",system-ui,sans-serif; font-size:14px; -webkit-font-smoothing:antialiased; }
+
+  /* Chrome */
+  .chrome { background:var(--chrome); color:#fff; }
+  .chrome .barre { display:flex; align-items:center; gap:12px; max-width:1360px; margin:0 auto; padding:0 18px; height:48px; }
+  .logo { width:22px; height:22px; border-radius:50%; flex:none;
+          background:conic-gradient(from 210deg,#f04e98,#fec514 130deg,#00bfb3 250deg,#f04e98); }
+  .app-nom { font-weight:700; font-size:15px; letter-spacing:-.01em; }
+  .app-sec { color:#98a2b3; font-size:13px; }
+  .chrome .pousse { margin-left:auto; display:flex; align-items:center; gap:8px; }
+  .btn { display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:6px;
+         border:1px solid #343741; background:#25262e; color:#dfe5ef; font:inherit; font-size:13px; font-weight:500;
+         cursor:pointer; white-space:nowrap; }
+  .btn.primaire { background:#0077cc; border-color:#0077cc; color:#fff; }
+  .btn.fantome { background:transparent; }
+  .btn:hover { filter:brightness(1.09); }
+  .btn:focus-visible { outline:2px solid #7cc2ff; outline-offset:2px; }
+  .btn:disabled { opacity:.65; cursor:progress; }
+  .btn .ic { font-size:13px; }
+  .ic.spin { display:inline-block; animation:tourne .6s linear; }
+  @keyframes tourne { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce){ .ic.spin{animation:none;} }
+  .chip-hint { color:#98a2b3; font-size:12px; }
+
+  /* Barre de recherche */
+  .requete { max-width:1360px; margin:0 auto; padding:12px 18px 0; display:flex; align-items:center; gap:8px; }
+  .kql { flex:1; display:flex; align-items:center; gap:8px; height:38px; padding:0 12px;
+         background:var(--panel); border:1px solid var(--bord); border-radius:6px; }
+  .kql:focus-within { border-color:var(--primary); box-shadow:0 0 0 1px var(--primary); }
+  .kql .loupe { color:var(--faint); flex:none; }
+  .kql input { flex:1; border:0; outline:0; background:transparent; color:var(--texte);
+               font-family:"Roboto Mono",monospace; font-size:13px; }
+  .kql input::placeholder { color:var(--faint); }
+  .kql .vider { border:0; background:transparent; color:var(--faint); cursor:pointer; font-size:16px; line-height:1;
+                padding:2px 4px; border-radius:4px; }
+  .kql .vider:hover { color:var(--texte); }
+
+  /* Barre de filtres */
+  .filtres { max-width:1360px; margin:0 auto; padding:10px 18px 0; display:flex; flex-wrap:wrap;
+             gap:8px 10px; align-items:center; }
+  .grp { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .grp > .lbl { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--faint); }
+  .chip { display:inline-flex; align-items:center; gap:6px; height:26px; padding:0 10px; cursor:pointer;
+          background:var(--panel); border:1px solid var(--bord); border-radius:14px; font-size:12.5px;
+          color:var(--sub); font-weight:500; user-select:none; }
+  .chip .dot { width:9px; height:9px; border-radius:50%; background:var(--bord-ft); }
+  .chip[aria-pressed="true"] { background:color-mix(in srgb,var(--vis0) 16%,var(--panel));
+          border-color:var(--vis0); color:var(--texte); }
+  .chip[aria-pressed="true"] .dot { background:var(--vis0); }
+  .chip.metro[aria-pressed="true"] { background:color-mix(in srgb,var(--vis1) 16%,var(--panel)); border-color:var(--vis1); }
+  .chip.metro[aria-pressed="true"] .dot { background:var(--vis1); }
+  .chip:focus-visible { outline:2px solid var(--primary); outline-offset:1px; }
+  .chip[hidden] { display:none; }
+  select.eui { height:30px; border:1px solid var(--bord); border-radius:6px; background:var(--panel); color:var(--texte);
+               font:inherit; font-size:12.5px; padding:0 26px 0 10px; cursor:pointer;
+               appearance:none; background-image:linear-gradient(45deg,transparent 50%,var(--sub) 50%),linear-gradient(135deg,var(--sub) 50%,transparent 50%);
+               background-position:calc(100% - 14px) 13px,calc(100% - 9px) 13px; background-size:5px 5px; background-repeat:no-repeat; }
+  select.eui:focus-visible { outline:2px solid var(--primary); outline-offset:1px; }
+  .reinit { color:var(--primary); font-size:12.5px; background:none; border:0; cursor:pointer; padding:4px; }
+  .reinit:hover { text-decoration:underline; }
+
+  /* Panneaux */
+  .board { max-width:1360px; margin:0 auto; padding:12px 18px 60px; display:grid;
+           grid-template-columns:repeat(12,1fr); gap:10px; }
+  .panel { background:var(--panel); border:1px solid var(--bord); border-radius:6px; display:flex; flex-direction:column; min-width:0; }
+  .panel > .tete { display:flex; align-items:center; gap:8px; height:34px; padding:0 10px 0 12px; border-bottom:1px solid var(--bord); }
+  .panel > .tete h2 { margin:0; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .panel > .tete .badge { margin-left:auto; font-size:10.5px; color:var(--faint); font-family:"Roboto Mono",monospace; }
+  .panel > .corps { padding:12px; flex:1; min-height:0; position:relative; }
+  .c12{grid-column:span 12}.c8{grid-column:span 8}.c7{grid-column:span 7}
+  .c6{grid-column:span 6}.c5{grid-column:span 5}.c4{grid-column:span 4}.c3{grid-column:span 3}
+  @media (max-width:900px){ .c8,.c7,.c6,.c5,.c4{grid-column:span 12} .c3{grid-column:span 6} }
+
+  .metric { display:flex; flex-direction:column; justify-content:center; height:100%; padding:4px 2px; }
+  .metric .v { font-size:30px; font-weight:700; letter-spacing:-.02em; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .metric .l { font-size:12.5px; color:var(--sub); margin-top:2px; }
+  .metric .n { font-size:11.5px; color:var(--faint); margin-top:4px; font-family:"Roboto Mono",monospace; }
+
+  .toile { position:relative; width:100%; }
+  .h-lg{height:288px}.h-md{height:250px}.h-sm{height:218px}
+  .vide { position:absolute; inset:0; display:none; align-items:center; justify-content:center; color:var(--faint);
+          font-size:13px; text-align:center; padding:20px; }
+  .panel.novide .vide { display:flex; }
+  .panel.novide .toile { visibility:hidden; }
+
+  footer { max-width:1360px; margin:0 auto; padding:6px 18px 40px; color:var(--faint); font-size:12px;
+           font-family:"Roboto Mono",monospace; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+</style>
+
+<div class="chrome">
+  <div class="barre">
+    <span class="logo"></span>
+    <span class="app-nom">Ponctualité&nbsp;STAR</span>
+    <span class="app-sec">/ Analytics · Dashboard</span>
+    <div class="pousse">
+      <span class="btn fantome"><span class="ic">🕑</span> 4 sept. → 12 oct. 2026</span>
+      <button class="btn primaire" id="refresh" type="button" title="Recharger les graphiques">
+        <span class="ic" id="refresh_ic">⟳</span> Refresh</button>
+    </div>
+  </div>
+</div>
+
+<div class="requete">
+  <div class="kql">
+    <span class="loupe">🔍</span>
+    <input id="q" type="search" autocomplete="off" spellcheck="false"
+           placeholder='Rechercher une ligne — ex. « métro », « C1 », « aéroport »…'
+           aria-label="Rechercher une ligne">
+    <button class="vider" id="q_clear" type="button" title="Effacer" hidden>×</button>
+  </div>
+  <span class="chip-hint" id="nlignes"></span>
+</div>
+
+<div class="filtres">
+  <div class="grp" id="chips" role="group" aria-label="Lignes"></div>
+  <div class="grp"><span class="lbl">Période</span>
+    <select class="eui" id="f_periode" aria-label="Période de la journée">
+      <option value="all">Toutes les heures</option>
+      <option value="pointe">Heures de pointe</option>
+      <option value="creuse">Heures creuses &amp; midi</option>
+      <option value="nuit">Soirée &amp; nuit</option>
+    </select></div>
+  <div class="grp"><span class="lbl">Jour</span>
+    <select class="eui" id="f_jour" aria-label="Type de jour"></select></div>
+  <div class="grp"><span class="lbl">Météo</span>
+    <select class="eui" id="f_meteo" aria-label="Conditions météo"></select></div>
+  <button class="reinit" id="reset" type="button">Réinitialiser</button>
+</div>
+
+<div class="board" id="board">
+  <div class="panel c3"><div class="tete"><h2>Passages</h2></div>
+    <div class="corps"><div class="metric"><div class="v" id="m_pass"></div>
+      <div class="l">dans la sélection</div><div class="n" id="m_pass_n"></div></div></div></div>
+  <div class="panel c3"><div class="tete"><h2>Ponctualité</h2></div>
+    <div class="corps"><div class="metric"><div class="v" id="m_ponct" style="color:var(--vis0)"></div>
+      <div class="l">à l'heure (−1 / +3 min)</div><div class="n" id="m_ponct_n"></div></div></div></div>
+  <div class="panel c3"><div class="tete"><h2>Retard moyen</h2></div>
+    <div class="corps"><div class="metric"><div class="v" id="m_ret"></div>
+      <div class="l">secondes</div><div class="n" id="m_ret_n"></div></div></div></div>
+  <div class="panel c3"><div class="tete"><h2>Courses supprimées</h2></div>
+    <div class="corps"><div class="metric"><div class="v" id="m_sup" style="color:var(--vis9)"></div>
+      <div class="l">annulées</div><div class="n" id="m_sup_n"></div></div></div></div>
+
+  <div class="panel c8" id="p_heures"><div class="tete"><h2>Retard moyen par heure</h2><span class="badge" id="b_heures"></span></div>
+    <div class="corps"><div class="toile h-lg"><canvas id="g_heures"></canvas></div><div class="vide">Aucune donnée pour ce filtre.</div></div></div>
+  <div class="panel c4" id="p_meteo"><div class="tete"><h2>Effet de la pluie</h2><span class="badge">météo connue</span></div>
+    <div class="corps"><div class="toile h-lg"><canvas id="g_meteo"></canvas></div><div class="vide">Aucune donnée météo pour ce filtre.</div></div></div>
+
+  <div class="panel c7" id="p_jours"><div class="tete"><h2>Ponctualité — série journalière</h2><span class="badge" id="b_jours"></span></div>
+    <div class="corps"><div class="toile h-md"><canvas id="g_jours"></canvas></div><div class="vide">Aucune donnée pour ce filtre.</div></div></div>
+  <div class="panel c5" id="p_lignes"><div class="tete"><h2>Retard moyen par ligne</h2></div>
+    <div class="corps"><div class="toile h-md"><canvas id="g_lignes"></canvas></div><div class="vide">Sélectionnez au moins une ligne.</div></div></div>
+
+  <div class="panel c5" id="p_repart"><div class="tete"><h2>Répartition des passages</h2></div>
+    <div class="corps"><div class="toile h-sm"><canvas id="g_repart"></canvas></div><div class="vide">Aucune donnée pour ce filtre.</div></div></div>
+  <div class="panel c7"><div class="tete"><h2>Anomalies détectées</h2><span class="badge">qualité · exécution #<span id="idx">{{ id_execution }}</span></span></div>
+    <div class="corps"><div class="toile h-sm"><canvas id="g_qualite"></canvas></div></div></div>
+</div>
+
+<footer>
+  <span>index: fait_passage · source: STAR (Keolis Rennes) &amp; Open-Meteo · cube <span id="ncell"></span> cellules</span>
+  <span>ratios recalculés à la lecture · filtres appliqués côté client</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const P = {{ donnees_json | safe }};
+const CUBE = P.cube.rows, C = {}; P.cube.cols.forEach((c,i)=>C[c]=i);
+const LIGNES = P.lignes;
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const T = () => ({ sub:css('--sub'), faint:css('--faint'), grille:css('--grille'), panel:css('--panel'),
+  bord:css('--bord'), tipbg:css('--tip-bg'), v0:css('--vis0'), v1:css('--vis1'), v5:css('--vis5'),
+  v7:css('--vis7'), v9:css('--vis9') });
+const fmt = n => Number(n).toLocaleString('fr-FR');
+const LIBM = {AUCUNE:'Sec',FAIBLE:'Pluie faible',MODEREE:'Pluie modérée',FORTE:'Pluie forte',INCONNU:'Inconnue'};
+const LIBJ = {OUVRABLE:'Ouvrables',SAMEDI:'Samedis',DIMANCHE_FERIE:'Dim. & fériés',VACANCES:'Vacances'};
+
+document.getElementById('idx').textContent = P.meta.id_execution;
+document.getElementById('ncell').textContent = fmt(CUBE.length);
+
+/* ---- État des filtres ---- */
+const state = { q:'', lignes:new Set(LIGNES.map(l=>l.code_ligne)), periode:'all', jour:'all', meteo:'all' };
+
+/* Remplit les menus dynamiquement à partir du cube (on n'affiche que ce qui existe). */
+function optionsUniques(idx){ const s=new Set(); for(const r of CUBE) s.add(r[idx]); return [...s]; }
+(function initSelects(){
+  const jours = optionsUniques(C.tj);
+  const ordreJ = ['OUVRABLE','SAMEDI','DIMANCHE_FERIE','VACANCES'];
+  jours.sort((a,b)=>ordreJ.indexOf(a)-ordreJ.indexOf(b));
+  const fj = document.getElementById('f_jour');
+  fj.innerHTML = '<option value="all">Tous les jours</option>' +
+    jours.map(j=>`<option value="${j}">${LIBJ[j]||j}</option>`).join('');
+  const meteos = optionsUniques(C.pr);
+  const ordreM = ['AUCUNE','FAIBLE','MODEREE','FORTE','INCONNU'];
+  meteos.sort((a,b)=>ordreM.indexOf(a)-ordreM.indexOf(b));
+  const fm = document.getElementById('f_meteo');
+  fm.innerHTML = '<option value="all">Toutes conditions</option>' +
+    meteos.map(m=>`<option value="${m}">${LIBM[m]||m}</option>`).join('');
+})();
+
+/* Chips de lignes */
+const chipsBox = document.getElementById('chips');
+LIGNES.forEach(l => {
+  const c = document.createElement('button');
+  c.className = 'chip' + (l.mode_transport==='METRO'?' metro':'');
+  c.type = 'button'; c.setAttribute('aria-pressed','true');
+  c.dataset.code = l.code_ligne;
+  c.innerHTML = `<span class="dot"></span>${l.mode_transport==='METRO'?'◆ ':''}${l.code_ligne.toUpperCase()}`;
+  c.title = l.nom_ligne;
+  c.addEventListener('click', () => {
+    if(state.lignes.has(l.code_ligne)) state.lignes.delete(l.code_ligne);
+    else state.lignes.add(l.code_ligne);
+    syncChips(); recalcul();
+  });
+  chipsBox.appendChild(c);
+});
+function syncChips(){
+  [...chipsBox.children].forEach(c => c.setAttribute('aria-pressed', state.lignes.has(c.dataset.code)?'true':'false'));
+  const n = state.lignes.size;
+  document.getElementById('nlignes').textContent = n + ' ligne' + (n>1?'s':'') + ' / ' + LIGNES.length;
+}
+
+/* Recherche : sélectionne les lignes dont le code, le nom ou le mode contient la requête. */
+const q = document.getElementById('q'), qClear = document.getElementById('q_clear');
+q.addEventListener('input', () => {
+  state.q = q.value.trim().toLowerCase();
+  qClear.hidden = !state.q;
+  if(state.q){
+    const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const t = norm(state.q);
+    state.lignes = new Set(LIGNES.filter(l =>
+      norm(l.code_ligne).includes(t) || norm(l.nom_ligne).includes(t) ||
+      norm(l.mode_transport).includes(t) || (t==='metro'&&l.mode_transport==='METRO')
+    ).map(l=>l.code_ligne));
+  } else {
+    state.lignes = new Set(LIGNES.map(l=>l.code_ligne));
+  }
+  syncChips(); recalcul();
+});
+qClear.addEventListener('click', () => { q.value=''; q.dispatchEvent(new Event('input')); q.focus(); });
+
+document.getElementById('f_periode').addEventListener('change', e => { state.periode=e.target.value; recalcul(); });
+document.getElementById('f_jour').addEventListener('change', e => { state.jour=e.target.value; recalcul(); });
+document.getElementById('f_meteo').addEventListener('change', e => { state.meteo=e.target.value; recalcul(); });
+document.getElementById('reset').addEventListener('click', () => {
+  q.value=''; qClear.hidden=true; state.q='';
+  state.lignes=new Set(LIGNES.map(l=>l.code_ligne)); state.periode='all'; state.jour='all'; state.meteo='all';
+  document.getElementById('f_periode').value='all';
+  document.getElementById('f_jour').value='all';
+  document.getElementById('f_meteo').value='all';
+  syncChips(); recalcul();
+});
+
+/* ---- Prédicat de filtrage d'une cellule du cube ---- */
+const CREUSE = ['CREUSE_MATIN','CREUSE_APRES_MIDI','MIDI'], NUIT = ['NUIT','SOIREE'];
+function passe(r){
+  if(!state.lignes.has(r[C.lig])) return false;
+  if(state.jour!=='all' && r[C.tj]!==state.jour) return false;
+  if(state.meteo!=='all' && r[C.pr]!==state.meteo) return false;
+  if(state.periode==='pointe' && !r[C.pk]) return false;
+  if(state.periode==='creuse' && !CREUSE.includes(r[C.cr])) return false;
+  if(state.periode==='nuit' && !NUIT.includes(r[C.cr])) return false;
+  return true;
+}
+/* Agrégation générique par clé */
+function agg(keyFn){
+  const m=new Map();
+  for(const r of CUBE){ if(!passe(r)) continue;
+    const k=keyFn(r); let o=m.get(k);
+    if(!o){ o={nr:0,np:0,sr:0,ns:0,ref:r}; m.set(k,o); }
+    o.nr+=r[C.nr]; o.np+=r[C.np]; o.sr+=r[C.sr]; o.ns+=r[C.ns];
+  }
+  return m;
+}
+const pct = (a,b) => b>0 ? +(100*a/b).toFixed(1) : null;
+const moy = (a,b) => b>0 ? +(a/b).toFixed(1) : null;
+
+let charts = {};
+function detruire(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+function vide(panelId, estVide){ document.getElementById(panelId).classList.toggle('novide', estVide); }
+
+function socle(){ return { responsive:true, maintainAspectRatio:false, animation:{duration:450},
+  interaction:{intersect:false,mode:'index'} }; }
+function tip(t){ return { backgroundColor:t.tipbg, titleColor:'#fff', bodyColor:'#d3dae6', borderWidth:0,
+  padding:10, cornerRadius:4, boxWidth:10, boxHeight:10,
+  titleFont:{family:'Inter',weight:'600',size:12}, bodyFont:{family:'Inter',size:12} }; }
+
+function recalcul(){
+  const t = T();
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.font.size = 11.5; Chart.defaults.color = t.sub;
+  const gy = { grid:{color:t.grille,drawTicks:false}, border:{display:false}, ticks:{color:t.faint,padding:6} };
+  const gx = { grid:{display:false}, border:{color:t.bord}, ticks:{color:t.faint} };
+  const leg = { display:false };
+
+  /* ---- KPI globaux (somme de la sélection) ---- */
+  let NR=0,NP=0,SR=0,NS=0;
+  for(const r of CUBE){ if(!passe(r))continue; NR+=r[C.nr]; NP+=r[C.np]; SR+=r[C.sr]; NS+=r[C.ns]; }
+  const set=(id,v)=>document.getElementById(id).textContent=v;
+  set('m_pass', fmt(NR+NS));
+  set('m_pass_n', (NR+NS>0? fmt(NR)+' réalisés':'—'));
+  set('m_ponct', NR>0 ? pct(NP,NR).toFixed(1)+' %' : '—');
+  set('m_ponct_n', NR>0 ? fmt(NP)+' à l\'heure' : 'aucun passage');
+  set('m_ret', NR>0 ? Math.round(SR/NR)+' s' : '—');
+  set('m_ret_n', NR>0 ? 'sur '+fmt(NR)+' passages' : '—');
+  set('m_sup', fmt(NS));
+  set('m_sup_n', (NR+NS>0? pct(NS,NR+NS)+' % du total':'—'));
+
+  /* ---- Retard par heure ---- */
+  const mh = agg(r=>r[C.h]);
+  const heures=[...mh.keys()].sort((a,b)=>a-b);
+  vide('p_heures', heures.length===0);
+  detruire('g_heures');
+  if(heures.length){
+    charts.g_heures = new Chart('g_heures',{ type:'bar',
+      data:{ labels:heures.map(h=>String(h).padStart(2,'0')),
+        datasets:[{ label:'Retard moyen (s)', data:heures.map(h=>moy(mh.get(h).sr,mh.get(h).nr)),
+          backgroundColor:heures.map(h=> mh.get(h).ref[C.pk] ? t.v7 : t.v0), barPercentage:.9, categoryPercentage:.82 }] },
+      options:{ ...socle(), plugins:{ legend:leg, tooltip:{ ...tip(t),
+          callbacks:{ title:c=>c[0].label+' h', label:c=>(c.parsed.y??0).toFixed(1)+' s'+(mh.get(heures[c.dataIndex]).ref[C.pk]?' · pointe':'') } } },
+        scales:{ x:{...gx,title:{display:true,text:'heure',color:t.faint}}, y:{...gy,beginAtZero:true} } } });
+  }
+  document.getElementById('b_heures').textContent = fmt(NR)+' passages';
+
+  /* ---- Effet de la pluie (météo connue) ---- */
+  const mm = agg(r=>r[C.pr]);
+  const ordreP=['AUCUNE','FAIBLE','MODEREE','FORTE'];
+  const precs=[...mm.keys()].filter(p=>p!=='INCONNU').sort((a,b)=>ordreP.indexOf(a)-ordreP.indexOf(b));
+  vide('p_meteo', precs.length===0);
+  detruire('g_meteo');
+  if(precs.length){
+    const coul={AUCUNE:t.v0,FAIBLE:t.v5,MODEREE:t.v7,FORTE:t.v9};
+    charts.g_meteo = new Chart('g_meteo',{ type:'bar',
+      data:{ labels:precs.map(p=>LIBM[p]),
+        datasets:[{ label:'Retard moyen (s)', data:precs.map(p=>moy(mm.get(p).sr,mm.get(p).nr)),
+          backgroundColor:precs.map(p=>coul[p]), barPercentage:.72 }] },
+      options:{ ...socle(), plugins:{ legend:leg, tooltip:{ ...tip(t),
+          callbacks:{ label:c=>(c.parsed.y??0).toFixed(1)+' s',
+            afterLabel:c=>{const o=mm.get(precs[c.dataIndex]); return 'ponctualité '+pct(o.np,o.nr)+' % · '+fmt(o.nr)+' passages';} } } },
+        scales:{ x:gx, y:{...gy,beginAtZero:true} } } });
+  }
+
+  /* ---- Ponctualité par jour ---- */
+  const mj = agg(r=>r[C.jour]);
+  const jours=[...mj.keys()].sort();
+  vide('p_jours', jours.length===0);
+  detruire('g_jours');
+  if(jours.length){
+    charts.g_jours = new Chart('g_jours',{ type:'line',
+      data:{ labels:jours.map(j=>j.slice(5)),
+        datasets:[{ label:'Ponctualité (%)', data:jours.map(j=>pct(mj.get(j).np,mj.get(j).nr)),
+          borderColor:t.v0, backgroundColor:t.v0+'22', fill:true, tension:.25, borderWidth:2,
+          pointRadius:jours.map(j=>mj.get(j).ref[C.we]?3.5:0), pointBackgroundColor:t.v0, pointBorderColor:t.panel, pointBorderWidth:1 }] },
+      options:{ ...socle(), plugins:{ legend:leg, tooltip:{ ...tip(t),
+          callbacks:{ label:c=>(c.parsed.y??0).toFixed(1)+' % ponctuel' } } },
+        scales:{ x:{...gx,ticks:{color:t.faint,maxTicksLimit:12}}, y:{...gy,min:70,max:100,ticks:{...gy.ticks,callback:v=>v+' %'}} } } });
+  }
+  document.getElementById('b_jours').textContent = jours.length+' jours';
+
+  /* ---- Retard par ligne ---- */
+  const ml = agg(r=>r[C.lig]);
+  const lignes=[...ml.keys()].sort((a,b)=>moy(ml.get(a).sr,ml.get(a).nr)-moy(ml.get(b).sr,ml.get(b).nr));
+  vide('p_lignes', lignes.length===0);
+  detruire('g_lignes');
+  if(lignes.length){
+    const info=Object.fromEntries(LIGNES.map(l=>[l.code_ligne,l]));
+    charts.g_lignes = new Chart('g_lignes',{ type:'bar',
+      data:{ labels:lignes.map(l=>(info[l]?.mode_transport==='METRO'?'◆ ':'')+l.toUpperCase()),
+        datasets:[{ label:'Retard moyen (s)', data:lignes.map(l=>moy(ml.get(l).sr,ml.get(l).nr)),
+          backgroundColor:lignes.map(l=> info[l]?.mode_transport==='METRO'?t.v0:t.v1), barPercentage:.82 }] },
+      options:{ ...socle(), indexAxis:'y', plugins:{ legend:leg, tooltip:{ ...tip(t),
+          callbacks:{ title:c=>info[lignes[c[0].dataIndex]]?.nom_ligne||lignes[c[0].dataIndex],
+            label:c=>{const o=ml.get(lignes[c.dataIndex]); return (c.parsed.x??0).toFixed(1)+' s · '+pct(o.np,o.nr)+' % ponctuel';} } } },
+        scales:{ x:{...gy,beginAtZero:true}, y:gx } } });
+  }
+
+  /* ---- Répartition ponctuel / en retard / supprimé ---- */
+  vide('p_repart', (NR+NS)===0);
+  detruire('g_repart');
+  if(NR+NS>0){
+    charts.g_repart = new Chart('g_repart',{ type:'doughnut',
+      data:{ labels:['À l\'heure','En retard/avance','Supprimé'],
+        datasets:[{ data:[NP, NR-NP, NS], backgroundColor:[t.v0,t.v7,t.v9], borderColor:t.panel, borderWidth:2 }] },
+      options:{ ...socle(), cutout:'58%', plugins:{ legend:{position:'right',labels:{color:t.sub,boxWidth:12,boxHeight:12,pointStyle:'rect',usePointStyle:true,padding:12,font:{size:11.5}}},
+          tooltip:{ ...tip(t), callbacks:{ label:c=>fmt(c.parsed)+' ('+pct(c.parsed,NR+NS)+' %)' } } } } });
+  }
+}
+
+/* ---- Anomalies : statique (qualité de l'exécution, hors filtres factuels) ---- */
+function rendreQualite(){
+  const t=T(); const qd=P.qualite;
+  detruire('g_qualite');
+  charts.g_qualite = new Chart('g_qualite',{ type:'bar',
+    data:{ labels:qd.map(x=>x.code_regle.replace(/^[AR]\d+_/,'').replace(/_/g,' ').toLowerCase()),
+      datasets:[{ label:'Occurrences', data:qd.map(x=>x.nombre),
+        backgroundColor:qd.map(x=> x.severite==='ERREUR'?t.v9:t.v5), barPercentage:.7 }] },
+    options:{ ...socle(), indexAxis:'y', plugins:{ legend:{display:false}, tooltip:{ ...tip(t),
+        callbacks:{ label:c=>fmt(c.parsed.x)+' ('+qd[c.dataIndex].severite.toLowerCase()+')' } } },
+      scales:{ x:{grid:{color:t.grille},border:{display:false},ticks:{color:t.faint},beginAtZero:true},
+               y:{grid:{display:false},border:{color:t.bord},ticks:{color:t.faint,font:{size:10.5}}} } } });
+}
+
+/* ---- Init + Refresh ---- */
+syncChips();
+recalcul();
+rendreQualite();
+
+const btn=document.getElementById('refresh'), ic=document.getElementById('refresh_ic');
+btn.addEventListener('click', () => {
+  btn.disabled=true; ic.classList.add('spin');
+  recalcul(); rendreQualite();
+  setTimeout(()=>{ btn.disabled=false; ic.classList.remove('spin'); }, 600);
+});
+</script>

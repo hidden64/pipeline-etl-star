@@ -1,0 +1,37 @@
+# Secrets — ne JAMAIS commiter la configuration réelle, seulement .env.example
+.env
+*.env
+!.env.example
+
+# Environnement virtuel Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Données brutes téléchargées : volumineuses et reproductibles depuis les sources.
+# On versionne le CODE qui les récupère, pas les données elles-mêmes.
+data/brut/**
+!data/brut/.gitkeep
+data/travail/**
+!data/travail/.gitkeep
+
+# Rapports et exports générés (reproductibles via le pipeline)
+rapports/*.html
+rapports/*.md
+rapports/*.json
+!rapports/.gitkeep
+
+# Artefacts de build Python (générés par `pip install -e .`)
+*.egg-info/
+build/
+dist/
+
+# Journaux
+*.log
+logs/
+
+# Outils
+.vscode/
+.idea/

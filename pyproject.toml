@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mobilite-etl"
+version = "0.1.0"
+description = "Pipeline ETL et entrepôt décisionnel — ponctualité du réseau STAR croisée avec la météo"
+requires-python = ">=3.11"
+
+# Disposition « src layout » : le code n'est importable qu'une fois installé.
+# Cela évite le piège classique où un test passe parce qu'il importe le dossier
+# local au lieu du paquet réellement installé.
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
