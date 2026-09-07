@@ -1,5 +1,5 @@
 # Pipeline ETL & entrepôt décisionnel : Ponctualité du réseau STAR × météo
-
+![alt text](image.png)
 > Chargement de sources hétérogènes vers un entrepôt en **schéma en étoile** :
 > nettoyage, dédoublonnage, gestion des rejets, historisation SCD2 et rapports
 > automatisés. **Python · SQL · PostgreSQL.**
