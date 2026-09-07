@@ -1,19 +1,19 @@
 -- =============================================================================
---  05 : Zone de staging (zone brute)
+--  05 — Zone de staging (zone brute)
 -- =============================================================================
 --  DEUX PARTIS PRIS, tous deux délibérés :
 --
 --  1. TOUT EN `text`
 --     Un chargement ne doit JAMAIS échouer sur un problème de format. Si on
 --     déclarait `arrival_time TIME`, le GTFS ferait exploser le COPY sur ses
---     40 131 valeurs `>= 24:00:00`, et on perdrait le lot entier pour une
+--     40 131 valeurs `>= 24:00:00` — et on perdrait le lot entier pour une
 --     donnée pourtant parfaitement légale.
 --     En `text`, l'ingestion réussit toujours. La validation devient une étape
 --     explicite qui produit des rejets exploitables au lieu d'une erreur psql.
 --     C'est le principe « charger d'abord, valider ensuite » (ELT).
 --
 --     EXCEPTION ASSUMÉE : la météo est chargée en `jsonb`. Pour une source
---     JSON, la forme brute EST le JSON : le stocker en jsonb ne perd rien et
+--     JSON, la forme brute EST le JSON — le stocker en jsonb ne perd rien et
 --     rend la donnée interrogeable. La règle du `text` vise les formats plats
 --     délimités, où le typage casse le chargement.
 --
@@ -40,7 +40,7 @@
 --  fait donc lire au DEFAULT un paramètre de session, positionné juste avant
 --  le chargement par `SET mobilite.id_execution = '...'`.
 --  Le second argument `true` de current_setting signifie « ne pas lever
---  d'erreur si le paramètre est absent » : sinon un chargement hors pipeline
+--  d'erreur si le paramètre est absent » — sinon un chargement hors pipeline
 --  échouerait.
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION staging.execution_courante()
@@ -57,7 +57,7 @@ COMMENT ON FUNCTION staging.execution_courante() IS
 
 
 -- =============================================================================
---  GTFS : un fichier, une table, colonnes à l'identique de la source
+--  GTFS — un fichier, une table, colonnes à l'identique de la source
 -- =============================================================================
 --  On conserve les NOMS DE COLONNES DE LA SOURCE (route_id, et non id_ligne).
 --  Renommer en zone brute romprait la traçabilité : quand on compare la table
@@ -145,7 +145,7 @@ CREATE UNLOGGED TABLE staging.gtfs_feed_info (
 
 
 -- =============================================================================
---  Météo : chargée en jsonb (voir l'exception documentée en tête de fichier)
+--  Météo — chargée en jsonb (voir l'exception documentée en tête de fichier)
 -- =============================================================================
 DROP TABLE IF EXISTS staging.meteo_brut;
 CREATE UNLOGGED TABLE staging.meteo_brut (
@@ -159,7 +159,7 @@ CREATE UNLOGGED TABLE staging.meteo_brut (
 
 
 -- =============================================================================
---  Export d'exploitation : la source « sale »
+--  Export d'exploitation — la source « sale »
 -- =============================================================================
 --  Colonnes en minuscules et sans accent : c'est la seule normalisation faite
 --  à ce stade, et elle est purement syntaxique (PostgreSQL replie les
@@ -189,7 +189,7 @@ COMMENT ON TABLE staging.realisation IS
 
 
 -- =============================================================================
---  Pas d'index sur le staging : volontairement
+--  Pas d'index sur le staging — volontairement
 -- =============================================================================
 --  Un index ralentit chaque insertion et n'a aucune utilité ici : les tables
 --  sont lues intégralement une seule fois par la phase de transformation, ce
