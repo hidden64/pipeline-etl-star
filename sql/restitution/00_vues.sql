@@ -1,5 +1,5 @@
 -- =============================================================================
---  RESTITUTION 00 — Vues d'analyse
+--  RESTITUTION 00 : Vues d'analyse
 -- =============================================================================
 --  Le schéma `restitution` est la SEULE porte d'entrée d'un outil de BI ou d'un
 --  analyste. On n'expose jamais `entrepot` directement : les vues forment un
@@ -8,7 +8,7 @@
 --
 --  RÈGLE ABSOLUE DE CES VUES : les ratios sont TOUJOURS recalculés à la volée,
 --  par SUM(numérateur) / SUM(dénominateur). On ne stocke jamais un taux, et on
---  ne fait jamais AVG d'un taux — une moyenne de moyennes est fausse. C'est le
+--  ne fait jamais AVG d'un taux : une moyenne de moyennes est fausse. C'est le
 --  principe d'additivité vu en phase 1, appliqué jusqu'au bout.
 -- =============================================================================
 
@@ -38,7 +38,7 @@ FROM entrepot.fait_passage;
 
 
 -- -----------------------------------------------------------------------------
---  Ponctualité selon la météo — la question fondatrice du projet
+--  Ponctualité selon la météo : la question fondatrice du projet
 -- -----------------------------------------------------------------------------
 --  On écarte le membre inconnu (sk_meteo = -1) : sur l'AXE météo, un fait sans
 --  météo n'a rien à dire. Il reste compté partout ailleurs.

@@ -1,5 +1,5 @@
 -- =============================================================================
---  TRANSFORM 00 — Catalogue des règles de qualité
+--  TRANSFORM 00 : Catalogue des règles de qualité
 -- =============================================================================
 --  Externaliser les règles dans une table, plutôt que de les enfouir dans le
 --  code, sert trois objectifs concrets :

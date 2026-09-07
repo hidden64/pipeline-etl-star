@@ -1,4 +1,4 @@
-# Phase 3 — Staging et chargement brut
+# Phase 3 : Staging et chargement brut
 
 ## 1. Résultat mesuré
 
@@ -22,7 +22,7 @@
 
 Ce n'est pas une optimisation marginale : c'est la différence entre un pipeline
 qui tourne en quelques secondes et un qui tourne en heures. La raison est
-structurelle — `INSERT` refait pour **chaque** ligne un aller-retour réseau, une
+structurelle : `INSERT` refait pour **chaque** ligne un aller-retour réseau, une
 analyse syntaxique, une planification et une transaction ; `COPY` fait le tout
 une fois, avec un analyseur spécialisé.
 
@@ -33,7 +33,7 @@ une fois, avec un analyseur spécialisé.
 Un chargement ne doit **jamais** échouer sur un format. La preuve est dans les
 données : `staging.realisation` contient 60 375 passages dont l'heure théorique
 commence par `24`, `25` ou `26`. Si la colonne était typée `TIME`, le `COPY`
-aurait échoué sur la première — et ces heures sont **légales** en GTFS.
+aurait échoué sur la première, et ces heures sont **légales** en GTFS.
 
 En `text`, l'ingestion réussit toujours ; la validation devient une étape
 explicite (phase 4) qui produit des rejets exploitables. C'est le principe
@@ -47,7 +47,7 @@ modification du schéma.
 ### 3.2 Tables `UNLOGGED`
 
 Elles n'écrivent pas dans le journal de transactions (WAL) : chargement plus
-rapide, pas de saturation du WAL sur 296 Mo d'un coup. Contrepartie — le contenu
+rapide, pas de saturation du WAL sur 296 Mo d'un coup. Contrepartie : le contenu
 est perdu en cas d'arrêt brutal du serveur.
 
 C'est acceptable **uniquement** parce que le staging est intégralement
@@ -70,14 +70,14 @@ absentes de sa liste, et ce défaut lit un paramètre de session
 `meta.source_fichier` porte l'empreinte SHA-256 de chaque fichier chargé, avec
 unicité sur `(code_source, hash_sha256)`. Au second passage, les trois sources
 sont reconnues : « contenu déjà ingéré ». C'est le **contenu** qui fait foi, pas
-le nom — un fichier renommé reste le même fichier.
+le nom : un fichier renommé reste le même fichier.
 
 ### 3.5 L'en-tête est lu dans le fichier, pas codé en dur
 
 `COPY` reçoit la liste des colonnes lue dans la première ligne du fichier. Le
 GTFS étant une spécification ouverte, un producteur peut ajouter une colonne
 facultative. Un chargeur qui suppose un ordre fixe décalerait silencieusement
-toutes les valeurs — un bug bien pire qu'une erreur franche. Une colonne inconnue
+toutes les valeurs : un bug bien pire qu'une erreur franche. Une colonne inconnue
 lève ici une erreur explicite avec son remède.
 
 ## 4. Le runner de migrations
@@ -90,7 +90,7 @@ Ce dernier cas rappelle une règle de production : **on ne modifie jamais une
 migration déjà passée**, on en ajoute une nouvelle, parce que les autres
 environnements ont déjà appliqué l'ancienne. Ici tous les scripts sont
 rejouables (`IF NOT EXISTS`, `ON CONFLICT DO NOTHING`), donc réappliquer est sans
-risque — mais ce confort de développement n'est pas transposable tel quel.
+risque, mais ce confort de développement n'est pas transposable tel quel.
 
 ## 5. Deux bugs rencontrés, et ce qu'ils apprennent
 
@@ -99,7 +99,7 @@ risque — mais ce confort de développement n'est pas transposable tel quel.
   `ON COMMIT DROP` suppose une transaction ouverte ; en autocommit il faut gérer
   la suppression explicitement.
 * **Idempotence non branchée** : le mécanisme `meta.source_fichier` existait mais
-  n'était appelé nulle part — la table restait vide. Écrire un mécanisme ne suffit
+  n'était appelé nulle part : la table restait vide. Écrire un mécanisme ne suffit
   pas ; il faut vérifier qu'il est réellement invoqué dans le flux. C'est
   exactement ce que la requête de contrôle a révélé.
 
@@ -115,5 +115,5 @@ tests/test_config_et_journal.py  validation + masquage des secrets
 
 30 tests passent.
 
-**Prochaine étape (phase 4)** : nettoyage, validation et gestion des rejets —
+**Prochaine étape (phase 4)** : nettoyage, validation et gestion des rejets :
 c'est là que les 60 000 anomalies injectées sont détectées et traitées.

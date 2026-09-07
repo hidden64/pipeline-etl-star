@@ -1,3 +1,9 @@
+# Phase 7 : Restitution et rapport automatisé
+v_ponctualite_meteo     l'effet de la pluie : la question fondatrice
+côtés** du ratio, sinon le dénominateur serait faux. Et l'on n'écrit **jamais**
+Cette phase illustre une dernière fois la valeur des tests et de la
+3. **Faille XSS, la plus importante.** `select_autoescape(["html"])` regarde
+**Prochaine étape (phase 8)** : le README et l'argumentaire d'entretien : savoir
 # Phase 7 — Restitution et rapport automatisé
 
 C'est le dernier maillon technique : rendre le travail exploitable, par un outil

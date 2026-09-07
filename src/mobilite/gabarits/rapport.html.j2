@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rapport d'exécution #{{ execution.id_execution }} — Ponctualité STAR</title>
+<title>Rapport d'exécution #{{ execution.id_execution }} : Ponctualité STAR</title>
 <style>
   :root {
     --encre: #1a2230; --gris: #5b6472; --faible: #8a93a3;
@@ -64,7 +64,7 @@
   <header class="chapeau">
     <h1>Rapport d'exécution #{{ execution.id_execution }}</h1>
     <div class="sous">
-      Entrepôt décisionnel — ponctualité du réseau STAR croisée avec la météo ·
+      Entrepôt décisionnel : ponctualité du réseau STAR croisée avec la météo ·
       généré le {{ genere_le.strftime('%d/%m/%Y à %H:%M') }}
     </div>
     <div style="margin-top:8px">
@@ -128,7 +128,7 @@
   </table>
 
   {# ===================== QUALITÉ DES DONNÉES ===================== #}
-  <h2>Qualité des données — rejets par règle</h2>
+  <h2>Qualité des données : rejets par règle</h2>
   {% if qualite %}
   <table>
     <thead><tr>
@@ -179,7 +179,7 @@
     </tbody>
   </table>
   <div class="rem">
-    Lecture : plus la précipitation augmente, plus le retard moyen croît — la
+    Lecture : plus la précipitation augmente, plus le retard moyen croît : la
     corrélation recherchée par le projet, mesurée sur les passages dont la météo
     est connue (le membre inconnu météo est exclu de cet axe).
   </div>

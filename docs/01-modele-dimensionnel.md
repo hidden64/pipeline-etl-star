@@ -1,6 +1,6 @@
-# Phase 1 — Conception du modèle dimensionnel
+# Phase 1 : Conception du modèle dimensionnel
 
-> Entrepôt décisionnel « Ponctualité & météo » — réseau STAR, Rennes Métropole.
+> Entrepôt décisionnel « Ponctualité & météo » : réseau STAR, Rennes Métropole.
 
 ---
 
@@ -23,7 +23,7 @@ Chacune de ces questions se lit comme : **une mesure** (retard, taux) **par** **
 
 ---
 
-## 2. Le grain — la décision la plus importante du projet
+## 2. Le grain : la décision la plus importante du projet
 
 Le **grain**, c'est la réponse à : *« que représente exactement une ligne de ma table de faits ? »*
 
@@ -50,7 +50,7 @@ volume autorise.** On peut toujours agréger un grain fin ; on ne peut jamais d�
 grossier. Les agrégats se font ensuite dans des vues (schéma `restitution`), pas en dégradant le fait.
 
 Pour ce projet on restreindra le périmètre (quelques lignes fortes, ~3 mois) pour rester autour de
-**2 à 5 millions de lignes** — assez pour que l'indexation et le partitionnement aient un sens réel,
+**2 à 5 millions de lignes** : assez pour que l'indexation et le partitionnement aient un sens réel,
 assez peu pour tourner sur ton poste.
 
 ---
@@ -181,7 +181,7 @@ garantit qu'aucune jointure ne perdra silencieusement des lignes.
 ## 4. Historisation : SCD2 sur `dim_ligne` et `dim_arret`
 
 **SCD** = *Slowly Changing Dimension*, dimension à évolution lente. Le problème : l'arrêt
-`Villejean-Université` est renommé `Villejean-Université — Campus` en mars. Que faire ?
+`Villejean-Université` est renommé `Villejean-Université, Campus` en mars. Que faire ?
 
 | Type | Comportement | Conséquence |
 |---|---|---|
@@ -242,7 +242,7 @@ On sépare les zones. Ce n'est pas cosmétique : c'est ce qui rend le pipeline *
 | `staging` | Copie fidèle du brut, **tout en `text`** | Non | Oui (par lot) |
 | `rejet` | Lignes refusées + motif | Oui | Non (on garde l'historique) |
 | `entrepot` | Le schéma en étoile | Oui | Non |
-| `restitution` | Vues d'agrégation pour l'analyse | — | — |
+| `restitution` | Vues d'agrégation pour l'analyse | N/A | N/A |
 | `meta` | Journal des exécutions et des étapes | Oui | Non |
 
 ### Pourquoi `staging` est-il intégralement en `text` ?
@@ -252,7 +252,7 @@ Parce qu'un chargement ne doit **jamais** échouer sur un problème de format. S
 le lot. En chargeant en `text`, l'ingestion réussit toujours, et la validation devient une étape
 explicite, contrôlée, qui produit des rejets exploitables au lieu d'une erreur PostgreSQL.
 
-C'est le principe **« charger d'abord, valider ensuite »** — ELT plutôt qu'ETL strict. C'est aussi ce
+C'est le principe **« charger d'abord, valider ensuite »** : ELT plutôt qu'ETL strict. C'est aussi ce
 qui permet de rejouer une transformation sans re-télécharger les sources.
 
 ---
@@ -321,5 +321,5 @@ sql/seed/10_peupler_dim_date.sql    -- génération du calendrier
 sql/seed/11_peupler_dim_creneau.sql -- les 24 créneaux horaires
 ```
 
-**Prochaine étape (phase 2)** : extraction des trois sources hétérogènes — GTFS (ZIP + CSV),
+**Prochaine étape (phase 2)** : extraction des trois sources hétérogènes : GTFS (ZIP + CSV),
 météo (API JSON Open-Meteo), et export d'exploitation (CSV « sale » en `latin-1`).

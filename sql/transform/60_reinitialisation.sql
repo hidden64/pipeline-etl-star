@@ -1,9 +1,9 @@
 -- =============================================================================
---  TRANSFORM 60 — Réinitialisation de l'entrepôt (reconstruction complète)
+--  TRANSFORM 60 : Réinitialisation de l'entrepôt (reconstruction complète)
 -- =============================================================================
 --  Vide les faits et les dimensions RECONSTRUCTIBLES, puis restaure leurs
 --  membres inconnus. À n'utiliser que pour repartir d'un état propre (rejeu
---  complet, développement) — le fonctionnement normal du pipeline est
+--  complet, développement) : le fonctionnement normal du pipeline est
 --  idempotent et n'en a pas besoin.
 --
 --  Ce qu'on NE touche PAS :

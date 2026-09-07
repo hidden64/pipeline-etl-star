@@ -1,7 +1,7 @@
-# Phase 4 — Nettoyage, validation et gestion des rejets
+# Phase 4 : Nettoyage, validation et gestion des rejets
 
 C'est le cœur du sujet. On part de 2 355 913 lignes brutes en `text` et on
-produit une table propre, typée, dédoublonnée — en traçant chaque anomalie.
+produit une table propre, typée, dédoublonnée, en traçant chaque anomalie.
 
 ## 1. Résultat mesuré
 
@@ -12,7 +12,7 @@ doublons absorbés ......     9 345
 rejets ERREUR ..........     3 617   (0,15 %)
 ```
 
-Concordance avec les anomalies injectées (phase 2) — la validation retrouve
+Concordance avec les anomalies injectées (phase 2) : la validation retrouve
 exactement ce qui a été semé :
 
 | Règle | Détecté | Injecté |
@@ -43,7 +43,7 @@ des `99999`.
 Toute la logique est **ensembliste**, en SQL : appliquer une règle à 2,3 M
 lignes se fait en un ordre, jamais en une boucle Python. Le module Python
 `validation.py` se contente d'appeler la procédure, de lire le bilan et
-d'appliquer la politique de seuil (arrêt si le taux de rejet dépasse le seuil —
+d'appliquer la politique de seuil (arrêt si le taux de rejet dépasse le seuil :
 au-delà, ce n'est plus une donnée à nettoyer mais une source cassée).
 
 Trois destinations depuis `staging.realisation` :
@@ -88,14 +88,14 @@ Chaque rejet ERREUR porte la ligne source **intégrale** en `jsonb`
 (`to_jsonb(r.*)`), reconstruite depuis le vrai brut. On peut corriger puis
 rejouer un rejet sans retourner au fichier d'origine.
 
-## 5. La bataille de la performance — mesurer, pas deviner
+## 5. La bataille de la performance : mesurer, pas deviner
 
 C'est la partie la plus instructive. Le routage est passé par **trois** versions.
 
 | Version | Temps | Cause |
 |---|---:|---|
 | Fonctions PL/pgSQL + `EXCEPTION` | 285 s | savepoint par ligne (~9 M) |
-| Réécriture SQL pur, naïve | 372 s | **pire** — hypothèse fausse |
+| Réécriture SQL pur, naïve | 372 s | **pire** : hypothèse fausse |
 | CTE `base` MATERIALIZED + `work_mem` | ~110 s | réévaluation supprimée |
 
 ### Ce qui s'est passé
@@ -105,7 +105,7 @@ C'est la partie la plus instructive. Le routage est passé par **trois** version
    *aggravé* le temps. **On ne devine pas la performance, on la mesure.**
 
 2. **Mesure ciblée.** Parse d'une colonne sur 200 k lignes : 1,1 s. La vue
-   complète sur 200 k lignes : 40,4 s — 37× plus lent. Le parsing n'était donc
+   complète sur 200 k lignes : 40,4 s, soit 37× plus lent. Le parsing n'était donc
    pas le coupable.
 
 3. **Vraie cause : l'inlining des CTE.** PostgreSQL fond les CTE dans la requête
@@ -139,7 +139,7 @@ Les tests SQL contre le moteur ont attrapé ce que la lecture n'avait pas vu.
 
 **Solution finale** : valider le nombre de jours du mois soi-même (avec la règle
 bissextile grégorienne), et n'appeler `make_date` que sur une combinaison
-prouvée valide — via des **`CASE` imbriqués**, dont le court-circuit est garanti
+prouvée valide, via des **`CASE` imbriqués**, dont le court-circuit est garanti
 par PostgreSQL, contrairement à `AND`. Robuste face à n'importe quelle entrée,
 sans bloc `EXCEPTION`, donc sans coût.
 

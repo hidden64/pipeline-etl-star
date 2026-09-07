@@ -1,5 +1,5 @@
 -- =============================================================================
---  10 — Dimensions de l'entrepôt
+--  10 : Dimensions de l'entrepôt
 -- =============================================================================
 --  Convention du projet :
 --    sk_*         clé de substitution (surrogate key), entière, sans sens métier
@@ -9,7 +9,7 @@
 
 
 -- =============================================================================
---  dim_date — dimension calendaire
+--  dim_date : dimension calendaire
 -- =============================================================================
 --  Sa clé est un entier AAAAMMJJ plutôt qu'une séquence. C'est la seule
 --  exception à la règle « clé sans signification », et elle est délibérée :
@@ -57,7 +57,7 @@ ON CONFLICT (sk_date) DO NOTHING;
 
 
 -- =============================================================================
---  dim_creneau — dimension horaire (granularité : l'heure)
+--  dim_creneau : dimension horaire (granularité : l'heure)
 -- =============================================================================
 --  Pourquoi une dimension séparée de dim_date, et pas une colonne `heure` dans
 --  le fait ?
@@ -89,7 +89,7 @@ ON CONFLICT (sk_creneau) DO NOTHING;
 
 
 -- =============================================================================
---  dim_ligne — les lignes de transport (SCD type 2)
+--  dim_ligne : les lignes de transport (SCD type 2)
 -- =============================================================================
 --  Source : routes.txt du GTFS.
 --
@@ -155,7 +155,7 @@ ON CONFLICT (sk_ligne) DO NOTHING;
 
 
 -- =============================================================================
---  dim_arret — les points d'arrêt (SCD type 2)
+--  dim_arret : les points d'arrêt (SCD type 2)
 -- =============================================================================
 --  Source : stops.txt du GTFS.
 --  Les arrêts sont renommés, déplacés de quelques mètres, ou rendus accessibles
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS entrepot.dim_arret (
     CONSTRAINT ck_dim_arret_periode CHECK (date_fin_validite >= date_debut_validite),
     -- Garde-fou géographique : la Bretagne, généreusement bornée. Une coordonnée
     -- hors de cette boîte trahit une inversion lat/lon ou un séparateur décimal
-    -- mal interprété — deux erreurs très fréquentes à l'import.
+    -- mal interprété : deux erreurs très fréquentes à l'import.
     CONSTRAINT ck_dim_arret_coordonnees CHECK (
         (latitude IS NULL AND longitude IS NULL)
         OR (latitude BETWEEN 46.5 AND 49.5 AND longitude BETWEEN -5.5 AND -0.5)
@@ -221,7 +221,7 @@ ON CONFLICT (sk_arret) DO NOTHING;
 
 
 -- =============================================================================
---  dim_meteo — conditions météorologiques (dimension « poubelle » / junk)
+--  dim_meteo : conditions météorologiques (dimension « poubelle » / junk)
 -- =============================================================================
 --  Source : API Open-Meteo (archive horaire, station de Rennes).
 --

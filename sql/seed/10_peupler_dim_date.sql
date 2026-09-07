@@ -1,5 +1,5 @@
 -- =============================================================================
---  SEED 10 — Peuplement de entrepot.dim_date
+--  SEED 10 : Peuplement de entrepot.dim_date
 -- =============================================================================
 --  Une dimension calendaire se génère, elle ne se charge pas depuis une source.
 --  On la peuple sur une plage large et par avance (typiquement 2020 → 2035),
@@ -133,7 +133,7 @@ BEGIN
         EXTRACT(WEEK    FROM j.jour)::smallint                    AS numero_semaine_iso,
         EXTRACT(DAY     FROM j.jour)::smallint                    AS jour_du_mois,
         -- ISODOW : 1 = lundi … 7 = dimanche. On n'utilise JAMAIS `DOW` ici, qui
-        -- démarre le dimanche à 0 — décalage d'un jour classique.
+        -- démarre le dimanche à 0 : décalage d'un jour classique.
         EXTRACT(ISODOW  FROM j.jour)::smallint                    AS jour_semaine_iso,
         (ARRAY['lundi','mardi','mercredi','jeudi',
                'vendredi','samedi','dimanche']

@@ -1,5 +1,5 @@
 -- =============================================================================
---  TRANSFORM 50 — Construction de la table de faits
+--  TRANSFORM 50 : Construction de la table de faits
 -- =============================================================================
 --  Tout converge ici. Pour chaque passage propre (staging.realisation_valide),
 --  on résout les CINQ clés de substitution vers les dimensions, puis on insère

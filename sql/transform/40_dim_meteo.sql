@@ -1,5 +1,5 @@
 -- =============================================================================
---  TRANSFORM 40 — Dimension météo (dimension « poubelle » / junk)
+--  TRANSFORM 40 : Dimension météo (dimension « poubelle » / junk)
 -- =============================================================================
 --  Rappel (phase 1) : dim_meteo ne stocke PAS des mesures continues (12,4 °C)
 --  mais des TRANCHES métier (10-15). Raisons :
@@ -95,7 +95,7 @@ END;
 -- =============================================================================
 --  Le staging météo tient dans UN document jsonb (le tableau « releves »). On le
 --  déplie avec jsonb_to_recordset, qui projette un tableau d'objets JSON en
---  lignes typées — l'outil idiomatique pour transformer du JSON en relationnel.
+--  lignes typées : l'outil idiomatique pour transformer du JSON en relationnel.
 -- =============================================================================
 DROP VIEW IF EXISTS staging.v_meteo_normalisee CASCADE;
 CREATE VIEW staging.v_meteo_normalisee AS
@@ -152,7 +152,7 @@ BEGIN
     -- --- 1. Insérer les combinaisons météo distinctes encore absentes --------
     --  ON CONFLICT (hash_attributs) DO NOTHING : deux créneaux aux conditions
     --  identiques partagent la même ligne de dimension. C'est tout l'intérêt de
-    --  la discrétisation — on passe de ~400 relevés à quelques dizaines de
+    --  la discrétisation : on passe de ~400 relevés à quelques dizaines de
     --  combinaisons distinctes.
     INSERT INTO entrepot.dim_meteo (
         code_condition_wmo, condition_libelle, famille_condition,

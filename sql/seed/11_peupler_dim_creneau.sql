@@ -1,5 +1,5 @@
 -- =============================================================================
---  SEED 11 — Peuplement de entrepot.dim_creneau
+--  SEED 11 : Peuplement de entrepot.dim_creneau
 -- =============================================================================
 --  24 lignes, figées. Les tranches correspondent aux périodes d'exploitation
 --  usuelles d'un réseau urbain français :
@@ -15,7 +15,7 @@
 --
 --  Ces découpages sont un CHOIX MÉTIER, pas une donnée. Les inscrire dans la
 --  dimension plutôt que dans chaque requête garantit que tout le monde analyse
---  avec la même définition d'« heure de pointe » — c'est le rôle même d'une
+--  avec la même définition d'« heure de pointe » : c'est le rôle même d'une
 --  dimension conforme.
 -- =============================================================================
 

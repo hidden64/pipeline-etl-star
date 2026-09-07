@@ -1,5 +1,5 @@
 -- =============================================================================
---  TRANSFORM 30 — Dimensions historisées (SCD type 2) : lignes et arrêts
+--  TRANSFORM 30 : Dimensions historisées (SCD type 2) : lignes et arrêts
 -- =============================================================================
 --  Rappel du principe (phase 1) : quand un attribut suivi change (un arrêt est
 --  renommé, une ligne change de mode), on ne L'ÉCRASE PAS. On FERME la version

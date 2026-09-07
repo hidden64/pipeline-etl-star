@@ -1,5 +1,5 @@
 -- =============================================================================
---  TRANSFORM 20 — Routage : propre d'un côté, rejets de l'autre
+--  TRANSFORM 20 : Routage : propre d'un côté, rejets de l'autre
 -- =============================================================================
 --  Procédure appelée par le pipeline. Elle prend le staging normalisé et le
 --  répartit en trois destinations :
@@ -104,7 +104,7 @@ BEGIN
     -- =========================================================================
     --  Clé naturelle du passage : (date_service, id_course, rang_arret).
     --  Politique : on garde la DERNIÈRE observation, celle de plus grand
-    --  numero_ligne. Justification métier — dans un flux temps réel, la dernière
+    --  numero_ligne. Justification métier : dans un flux temps réel, la dernière
     --  estimation d'un passage est la plus proche de la réalité observée ; dans
     --  un rejeu de fichier, la dernière écriture prime. La règle est la même
     --  dans les deux cas, ce qui est exactement ce qu'on veut.

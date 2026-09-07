@@ -1,4 +1,4 @@
-# Phase 6 — Construction de la table de faits
+# Phase 6 : Construction de la table de faits
 
 Tout converge ici : les 2 342 951 passages propres deviennent des faits, chacun
 relié à ses cinq dimensions.
@@ -37,7 +37,7 @@ substitution :
 | `sk_arret` | **SCD2** : identifiant + validité | membre inconnu `-1` (orphelins) |
 | `sk_meteo` | table `(jour, heure) → sk_meteo` | membre inconnu `-1` (hors horizon) |
 
-### La résolution SCD2 — le point technique de la phase
+### La résolution SCD2 : le point technique de la phase
 
 Une dimension historisée a plusieurs versions d'une même clé. Le fait doit
 pointer vers la version **valide à la date du passage**, pas vers la version
@@ -101,7 +101,7 @@ Les mesures sont conformes au réel encodé, et surtout **cohérentes entre elle
 
 L'heure de pointe multiplie le retard par trois. Ces réponses ne sortent pas
 d'un script isolé : elles sont le produit de **cinq jointures dimensionnelles**
-sur une table de faits partitionnée — l'architecture en étoile à l'œuvre.
+sur une table de faits partitionnée : l'architecture en étoile à l'œuvre.
 
 ## 5. Le partitionnement, vérifié
 
@@ -126,7 +126,7 @@ plage (`BETWEEN date_debut AND date_fin`), difficiles à indexer aussi bien qu'u
 
 Piste connue si le volume grossissait : pré-résoudre les clés SCD2 dans une table
 intermédiaire indexée avant l'insertion, ou remplacer la plage par une jointure
-d'égalité sur une clé de version pré-calculée. On ne l'implémente pas ici — le
+d'égalité sur une clé de version pré-calculée. On ne l'implémente pas ici, le
 gain ne se justifie qu'au-delà de plusieurs dizaines de millions de faits, et la
 règle reste : n'optimiser qu'après avoir mesuré un besoin réel.
 
@@ -141,5 +141,5 @@ src/mobilite/__main__.py               python -m mobilite
 ```
 
 **Prochaine étape (phase 7)** : vues de restitution (schéma `restitution`) et
-rapport automatisé — HTML généré à partir de `meta.*` et des agrégats, pour
+rapport automatisé : HTML généré à partir de `meta.*` et des agrégats, pour
 présenter le bilan d'exécution et la qualité des données d'un coup d'œil.

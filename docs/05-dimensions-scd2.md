@@ -1,4 +1,4 @@
-# Phase 5 — Dimensions historisées (SCD2) et dimension météo
+# Phase 5 : Dimensions historisées (SCD2) et dimension météo
 
 ## 1. Résultat mesuré
 
@@ -74,7 +74,7 @@ reproductible, sur une clé dédiée qu'il nettoie après lui.
 ## 5. La date d'effet
 
 Une nouvelle version SCD2 prend effet à une date précise. On la prend égale à
-`feed_info.feed_start_date` — la date à laquelle la nouvelle description du
+`feed_info.feed_start_date` : la date à laquelle la nouvelle description du
 réseau devient officielle (ici 2026-09-04). On la LIT dans le staging plutôt que
 de la coder en dur : elle change à chaque feed. À défaut, on retombe sur la date
 du jour.
@@ -110,7 +110,7 @@ mode = 'METRO' OR route_desc ILIKE '%chronostar%' OR code ~ '^C[0-9]'
 --                ↑ NULL ILIKE ... = NULL, et false OR NULL OR false = NULL
 ```
 
-`est_ligne_structurante` étant `NOT NULL`, l'insertion échouait — mais seulement
+`est_ligne_structurante` étant `NOT NULL`, l'insertion échouait, mais seulement
 pour une ligne sans `route_desc`. Les 155 vraies lignes en ont toutes une, donc
 la production n'a jamais planté. **Un test sur une donnée minimale a débusqué ce
 que la donnée réelle masquait.**

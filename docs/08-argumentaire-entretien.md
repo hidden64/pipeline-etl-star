@@ -1,3 +1,8 @@
+# Phase 8 : Savoir raconter le projet en entretien
+> « J'ai construit un pipeline ETL qui charge trois sources hétérogènes : les
+   météo, vers un entrepôt décisionnel en schéma en étoile sur PostgreSQL. Il
+pipeline s'arrête : c'est le signe d'une source cassée, pas d'un nettoyage.
+des CTE par PostgreSQL : 14 millions d'appels au lieu de 2,3 millions. Corrigé
 # Phase 8 — Savoir raconter le projet en entretien
 
 Un projet qu'on ne sait pas présenter ne compte pas. Voici comment le raconter,

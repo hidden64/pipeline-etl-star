@@ -1,5 +1,5 @@
 -- =============================================================================
---  TRANSFORM 10 — Normalisation de l'export d'exploitation
+--  TRANSFORM 10 : Normalisation de l'export d'exploitation
 -- =============================================================================
 --  On construit une VUE qui présente le staging brut (tout en text) sous une
 --  forme typée et normalisée, SANS encore rien rejeter. Chaque ligne y gagne :
@@ -24,11 +24,11 @@
 --  Elles renvoient NULL au lieu d'échouer sur une entrée invalide : une seule
 --  ligne fautive ne doit pas casser la transformation de 2,3 millions d'autres.
 --
---  POINT DE PERFORMANCE — leçon centrale de cette phase.
+--  POINT DE PERFORMANCE : leçon centrale de cette phase.
 --  Une première version utilisait PL/pgSQL avec `EXCEPTION WHEN OTHERS`. Le
 --  routage prenait 285 secondes. Deux raisons cumulées :
 --    1. un bloc EXCEPTION crée un SAVEPOINT à CHAQUE appel. Sur 2,3 M lignes ×
---       4 fonctions, cela fait ~9 millions de savepoints — un coût énorme ;
+--       4 fonctions, cela fait ~9 millions de savepoints, un coût énorme ;
 --    2. une fonction PL/pgSQL n'est JAMAIS « inlinée » par le planificateur :
 --       elle reste une boîte noire appelée ligne à ligne.
 --
@@ -36,7 +36,7 @@
 --  INLINABLES : le planificateur les fond dans la requête, comme si le CASE
 --  était écrit à la main. La regex de garde suffit à éviter tout cast fautif,
 --  donc l'EXCEPTION est superflue. Résultat : le même routage passe à quelques
---  secondes. C'est la règle à retenir — sur de gros volumes, préférer le SQL
+--  secondes. C'est la règle à retenir : sur de gros volumes, préférer le SQL
 --  pur inlinable au PL/pgSQL, et bannir EXCEPTION dans le chemin chaud.
 --
 --  Toutes IMMUTABLE : même entrée → même sortie, sans effet de bord.
@@ -76,7 +76,7 @@ END;
 --
 -- Pourquoi des CASE IMBRIQUÉS et pas un simple WHERE ? Parce que PostgreSQL,
 -- une fois cette fonction inlinée dans la grande requête de normalisation,
--- peut évaluer make_date AVANT le filtre — et make_date LÈVE sur une date
+-- peut évaluer make_date AVANT le filtre, et make_date LÈVE sur une date
 -- impossible. Un CASE, lui, garantit de ne pas évaluer les branches non
 -- retenues. On s'appuie sur cette garantie en imbriquant :
 --   - le CASE externe protège les casts ::int (une entrée non conforme à la
@@ -160,7 +160,7 @@ DROP VIEW IF EXISTS staging.v_realisation_normalisee CASCADE;
 CREATE VIEW staging.v_realisation_normalisee AS
 -- `AS MATERIALIZED` est ici une décision de PERFORMANCE, pas de style.
 -- Sans lui, PostgreSQL fond (inline) le CTE dans la requête et RÉÉVALUE chaque
--- fonction de parsing autant de fois que sa colonne est référencée plus loin —
+-- fonction de parsing autant de fois que sa colonne est référencée plus loin :
 -- date_service et heure_theorique le sont 5 à 6 fois, soit ~14 M appels au lieu
 -- de 2,3 M. Mesuré : 40 s pour 200 k lignes en inline, contre ~1 s en une passe.
 -- MATERIALIZED force le calcul UNE fois, stocké, puis relu. C'est le remède
@@ -194,7 +194,7 @@ WITH base AS MATERIALIZED (
 -- PAS de MATERIALIZED ici, à dessein : `typee` ne fait que LIRE les colonnes
 -- déjà calculées et stockées par `base` (date_service, heure_theorique). Les
 -- expressions dérivées (horodate_theorique) sont de simples additions
--- d'intervalles sur des colonnes stockées — leur éventuelle réévaluation ne
+-- d'intervalles sur des colonnes stockées : leur éventuelle réévaluation ne
 -- coûte quasi rien, contrairement au parsing. Matérialiser ici n'apporterait
 -- qu'une écriture de 2,3 M lignes en plus. On ne matérialise QUE ce qui est cher.
 typee AS (

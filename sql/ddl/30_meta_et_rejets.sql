@@ -1,8 +1,8 @@
 -- =============================================================================
---  30 — Métadonnées d'exécution et table de rejets
+--  30 : Métadonnées d'exécution et table de rejets
 -- =============================================================================
 --  À écrire AVANT les tables métier : tout le reste du pipeline y fait référence
---  via `id_execution`. Sans ce journal, un pipeline est une boîte noire — on ne
+--  via `id_execution`. Sans ce journal, un pipeline est une boîte noire : on ne
 --  peut ni auditer, ni reprendre après incident, ni prouver l'idempotence.
 -- =============================================================================
 

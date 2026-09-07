@@ -6,7 +6,7 @@ Enchaîne les étapes dans l'ordre, sous une seule exécution journalisée :
 
 Chaque étape a déjà sa propre journalisation fine (``meta.etape``). Ce module
 assure la cohérence d'ensemble : une exécution, un statut global, et une
-politique claire en cas d'échec — l'exécution est marquée ``ECHEC`` et l'erreur
+politique claire en cas d'échec : l'exécution est marquée ``ECHEC`` et l'erreur
 est journalisée, mais les étapes déjà validées le restent (autocommit), ce qui
 permet une reprise sans tout recommencer.
 """
@@ -106,7 +106,7 @@ def executer_pipeline(
             LOG.info("Pipeline terminé en %.1f s.", time.monotonic() - debut)
             return 0
 
-        except Exception as exc:  # noqa: BLE001 — on veut tout tracer
+        except Exception as exc:  # noqa: BLE001 : on veut tout tracer
             terminer_execution(conn, id_execution, "ECHEC", str(exc)[:2000])
             LOG.exception("Pipeline interrompu : %s", exc)
             return 1
@@ -115,7 +115,7 @@ def executer_pipeline(
 def _analyser_arguments(argv: list[str] | None = None) -> argparse.Namespace:
     analyseur = argparse.ArgumentParser(
         prog="python -m mobilite",
-        description="Pipeline ETL — ponctualité STAR croisée avec la météo.",
+        description="Pipeline ETL : ponctualité STAR croisée avec la météo.",
     )
     analyseur.add_argument("--sans-extraction", action="store_true",
                            help="ne pas retélécharger GTFS/météo (rejeu hors ligne)")

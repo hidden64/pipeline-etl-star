@@ -1,5 +1,5 @@
 -- =============================================================================
---  20 — Table de faits
+--  20 : Table de faits
 -- =============================================================================
 --  GRAIN : une ligne = le passage d'un véhicule à un arrêt, pour une course
 --          donnée, à une date de service donnée.
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS entrepot.fait_passage (
 
     --  Garde-fou métier : au-delà de ces bornes, c'est une erreur de capteur,
     --  pas un retard. Les valeurs hors bornes doivent partir en rejet AVANT
-    --  d'arriver ici — cette contrainte est le filet de sécurité qui garantit
+    --  d'arriver ici : cette contrainte est le filet de sécurité qui garantit
     --  qu'aucune valeur aberrante ne pollue les moyennes.
     CONSTRAINT ck_fait_passage_retard CHECK (
         retard_secondes IS NULL OR retard_secondes BETWEEN -1800 AND 7200

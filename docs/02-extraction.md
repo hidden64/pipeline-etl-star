@@ -1,4 +1,4 @@
-# Phase 2 — Extraction des sources hétérogènes
+# Phase 2 : Extraction des sources hétérogènes
 
 ## 1. Les trois sources
 
@@ -34,7 +34,7 @@ Première période envisagée : juin–août 2026, choisie pour que la météo p
 de l'archive **observée** plutôt que d'une prévision.
 
 Elle s'est révélée inapplicable. `calendar.txt` ne décrit que la fenêtre de
-validité du feed — **2026-09-04 → 2026-10-12**. En dehors, aucun `service_id`
+validité du feed : **2026-09-04 → 2026-10-12**. En dehors, aucun `service_id`
 n'est actif, donc aucune course : le pipeline aurait produit zéro ligne.
 
 > **Leçon générale : un référentiel temporel ne s'extrapole pas.** Un calendrier
@@ -100,7 +100,7 @@ code**. Conséquences :
 
 C'est un motif d'architecture courant, et il se raconte bien en entretien.
 
-### 3.4 Le collecteur ne dédoublonne pas — volontairement
+### 3.4 Le collecteur ne dédoublonne pas : volontairement
 
 Le flux GTFS-RT republie le même passage toutes les 60 secondes, avec une
 estimation qui s'affine à l'approche du véhicule. Le collecteur écrit **toutes**

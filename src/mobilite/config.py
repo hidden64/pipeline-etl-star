@@ -78,7 +78,7 @@ def _chemin(cle: str, defaut: str) -> Path:
     """Résout un chemin relatif par rapport à la racine du projet, pas au cwd.
 
     Sans cela, lancer le pipeline depuis un autre répertoire écrirait les
-    fichiers au mauvais endroit — bug silencieux et pénible à diagnostiquer.
+    fichiers au mauvais endroit : bug silencieux et pénible à diagnostiquer.
     """
     brut = Path(os.getenv(cle, defaut))
     return brut if brut.is_absolute() else (RACINE_PROJET / brut).resolve()

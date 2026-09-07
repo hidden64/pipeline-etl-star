@@ -1,5 +1,5 @@
 -- =============================================================================
---  00 — Schémas de l'entrepôt
+--  00 : Schémas de l'entrepôt
 -- =============================================================================
 --  Chaque schéma matérialise une ZONE du pipeline. La séparation physique est
 --  ce qui rend le traitement rejouable : on peut vider et recharger `staging`

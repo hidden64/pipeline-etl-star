@@ -1,5 +1,5 @@
 -- =============================================================================
---  BOOTSTRAP — à exécuter UNE SEULE FOIS, en superutilisateur (postgres)
+--  BOOTSTRAP : à exécuter UNE SEULE FOIS, en superutilisateur (postgres)
 -- =============================================================================
 --  C'est le seul script du projet qui exige des droits d'administration.
 --  Tout le reste tourne sous le rôle applicatif `mobilite_etl`.
@@ -42,7 +42,7 @@ $$;
 -- -----------------------------------------------------------------------------
 --  CREATE DATABASE ne peut pas figurer dans un bloc DO : il n'est pas
 --  transactionnel. On passe donc par \gexec, qui exécute le texte produit par
---  la requête précédente — uniquement si elle renvoie une ligne.
+--  la requête précédente : uniquement si elle renvoie une ligne.
 SELECT format(
     'CREATE DATABASE mobilite OWNER mobilite_etl ENCODING ''UTF8'' '
     'LC_COLLATE ''French_France.1252'' LC_CTYPE ''French_France.1252'' '
@@ -62,4 +62,4 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 GRANT USAGE ON SCHEMA public TO mobilite_etl;
 
 COMMENT ON DATABASE mobilite IS
-    'Entrepôt décisionnel — ponctualité du réseau STAR (Rennes) croisée avec la météo.';
+    'Entrepôt décisionnel : ponctualité du réseau STAR (Rennes) croisée avec la météo.';

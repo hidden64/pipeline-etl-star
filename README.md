@@ -1,4 +1,4 @@
-# Pipeline ETL & entrepôt décisionnel — Ponctualité du réseau STAR × météo
+# Pipeline ETL & entrepôt décisionnel : Ponctualité du réseau STAR × météo
 
 > Chargement de sources hétérogènes vers un entrepôt en **schéma en étoile** :
 > nettoyage, dédoublonnage, gestion des rejets, historisation SCD2 et rapports
@@ -7,7 +7,7 @@
 Cas d'usage réel et local : croiser la **ponctualité des bus et du métro de
 Rennes** (réseau STAR, données ouvertes) avec les **conditions météo** (Open-Meteo),
 pour répondre à des questions comme *« les bus sont-ils plus en retard quand il
-pleut ? »* — et la réponse, mesurée sur 2,3 millions de passages, est **oui**.
+pleut ? »* Et la réponse, mesurée sur 2,3 millions de passages, est **oui**.
 
 ---
 
@@ -28,7 +28,7 @@ pleut ? »* — et la réponse, mesurée sur 2,3 millions de passages, est **oui
 | Tests (70, dont intégration base) | `tests/` |
 
 Chaque phase est documentée dans [`docs/`](docs/), avec les **décisions de
-conception justifiées** et les **bugs rencontrés** — c'est le vrai récit du projet.
+conception justifiées** et les **bugs rencontrés** : c'est le vrai récit du projet.
 
 ---
 
@@ -68,15 +68,15 @@ flowchart LR
 - **5 dimensions** : date, créneau horaire, ligne (SCD2), arrêt (SCD2), météo (junk).
 - **Mesures** : retard (semi-additif), ponctualité, suppression, compteur.
 - **Membre inconnu** (`sk = -1`) dans chaque dimension : les faits douteux sont
-  conservés, jamais jetés — les totaux restent justes.
+  conservés, jamais jetés : les totaux restent justes.
 
 ---
 
 ## Stack
 
-- **PostgreSQL 18** — schémas séparés (`staging`, `entrepot`, `rejet`,
+- **PostgreSQL 18** : schémas séparés (`staging`, `entrepot`, `rejet`,
   `restitution`, `meta`), partitionnement par plage, `COPY`, procédures PL/pgSQL.
-- **Python 3.11+** — `psycopg 3`, `requests`, `pandas` (extraction), `Jinja2`
+- **Python 3.11+** : `psycopg 3`, `requests`, `pandas` (extraction), `Jinja2`
   (rapport), `pytest`.
 - Le rôle applicatif `mobilite_etl` est **sans privilège** (`NOSUPERUSER`) :
   seul le bootstrap exige l'administration.
@@ -125,15 +125,15 @@ python -m mobilite --reinitialiser
 ```
 
 À chaque exécution réussie, `rapports/` reçoit :
-- `rapport_execution_*.html` — le rapport tabulaire (bilan, qualité, indicateurs) ;
-- `dashboard_*.html` — un **tableau de bord interactif** (6 graphes Chart.js,
+- `rapport_execution_*.html` : le rapport tabulaire (bilan, qualité, indicateurs) ;
+- `dashboard_*.html` : un **tableau de bord interactif** (6 graphes Chart.js,
   autonome, ouvrable hors ligne) ;
-- `dashboard_donnees_*.json` — les mêmes données, réutilisables par un autre outil.
+- `dashboard_donnees_*.json` : les mêmes données, réutilisables par un autre outil.
 
 ### Collecte temps réel (optionnel)
 
 Le module `collecteur_rt.py` interroge le **vrai flux GTFS-RT** du réseau STAR et
-écrit dans le même format que le simulateur — le pipeline ne fait pas la
+écrit dans le même format que le simulateur : le pipeline ne fait pas la
 différence. Il s'exécute en boucle sous un ordonnanceur :
 
 ```bash
@@ -232,6 +232,6 @@ tests unitaires (conversion d'heures, configuration, filtres) tournent partout.
 
 ## Sources de données
 
-- **Réseau STAR** (Keolis Rennes) — GTFS statique & GTFS-RT, via
+- **Réseau STAR** (Keolis Rennes) : GTFS statique & GTFS-RT, via
   [transport.data.gouv.fr](https://transport.data.gouv.fr).
-- **Open-Meteo** — archive et prévision horaires, sans clé d'API.
+- **Open-Meteo** : archive et prévision horaires, sans clé d'API.
