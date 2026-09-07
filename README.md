@@ -130,6 +130,24 @@ python -m mobilite --reinitialiser
   autonome, ouvrable hors ligne) ;
 - `dashboard_donnees_*.json` : les mêmes données, réutilisables par un autre outil.
 
+### Tester le tableau de bord dans le navigateur
+
+Après une exécution réussie de `python -m mobilite`, démarrez un serveur local
+depuis la racine du projet :
+
+```bash
+python -m http.server 8000 --directory rapports
+```
+
+Ouvrez ensuite [http://localhost:8000/](http://localhost:8000/) et cliquez sur
+le fichier `dashboard_*.html` le plus récent. Le tableau de bord sera alors
+accessible à l'adresse correspondante, par exemple :
+
+`http://localhost:8000/dashboard_0011.html`
+
+Le terminal qui héberge le serveur doit rester ouvert pendant le test. Arrêtez
+le serveur avec `Ctrl+C`.
+
 ### Collecte temps réel (optionnel)
 
 Le module `collecteur_rt.py` interroge le **vrai flux GTFS-RT** du réseau STAR et
